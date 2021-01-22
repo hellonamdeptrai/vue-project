@@ -68,7 +68,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$router.push({ path: 'admin' })
+          alert('Thành công!');
         } else {
           console.log('Lỗi đăng nhập!!');
           return false;

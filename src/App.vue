@@ -1,14 +1,32 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+<!--  <div id="app">-->
+<!--    <div id="nav">-->
+<!--      <router-link to="/">Home</router-link> |-->
+<!--      <router-link to="/about">About</router-link>-->
+<!--    </div>-->
+<!--    <router-view/>-->
+<!--  </div>-->
+<!--  <Login/>-->
+  <router-view/>
 </template>
 
+<script>
+// import Login from "./components/exercise04/Login"
+
+export default {
+  components: {
+    // Login
+  }
+}
+</script>
+
 <style>
+*{
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family: Arial;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
