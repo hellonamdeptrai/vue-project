@@ -3,6 +3,7 @@
     <div class="login">
       <div v-if="check" class="wrap">
         <div class="logo">
+          <h3>{{count}}</h3>
           <img src="http://dev-fms.zentsoft.com/static/media/logo-login.2d516aef.png" alt="">
         </div>
 
@@ -54,6 +55,7 @@
 </template>
 
 <script>
+ import { mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -99,7 +101,12 @@ export default {
     login() {
       this.check = true;
     }
-  }
+  },
+  computed: {
+      ...mapState([
+        'count'
+      ])
+    }
 }
 </script>
 
