@@ -177,8 +177,8 @@ export default {
         price: [
           {
             required: true,
-            message: "Mô tả không được để trống",
-            trigger: "change",
+            message: "Giá bán không được để trống",
+            trigger: "blur",
           },
         ]
       },

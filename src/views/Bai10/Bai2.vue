@@ -15,29 +15,37 @@
     ></el-input>
 
     <el-dialog title="Thêm sản phẩm mới" :visible.sync="dialogFormVisible">
-      <el-form
-        :model="form"
-        :rules="rules"
-        ref="form"
-        label-width="120px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="Tên" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Miêu tả" :label-width="formLabelWidth" prop="description">
-          <el-input v-model="form.description" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Giá bán" :label-width="formLabelWidth" prop="price">
-          <el-input
-            type="number"
-            v-model="form.price"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="Ảnh" :label-width="formLabelWidth" prop="image">
-          <input @change="fileImage" type="file" />
-        </el-form-item>
+      <el-form :model="form" :rules="rules" ref="form" label-position="top">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Ảnh" prop="image">
+              <input @change="fileImage" type="file" id="file" class="inputfile" />
+              <label for="file">
+                <img class="imageHover" v-if="url" :src="url" alt="">
+                <img v-else src="../../assets/SD-default-image.png" alt="">
+              </label>
+              <i v-show="buttonCloseCheck" @click="buttonCloseImage" class="el-icon-close buttonClose"></i>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Tên" prop="name">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Miêu tả" prop="description">
+              <el-input
+                v-model="form.description"
+                autocomplete="off"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="Giá bán" prop="price">
+              <el-input
+                type="number"
+                v-model="form.price"
+                autocomplete="off"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Thoát</el-button>
@@ -48,36 +56,41 @@
     </el-dialog>
 
     <el-dialog title="Sửa sản phẩm" :visible.sync="dialogFormEdit">
-      <el-form
-        :model="form"
-        :rules="rules"
-        ref="form"
-        label-width="120px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="Tên" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Miêu tả" :label-width="formLabelWidth" prop="description">
-          <el-input v-model="form.description" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Giá bán" :label-width="formLabelWidth" prop="price">
-          <el-input
-            type="number"
-            v-model="form.price"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="Ảnh" :label-width="formLabelWidth" prop="image">
-          <input @change="fileImage" type="file" />
-        </el-form-item>
+      <el-form :model="form" :rules="rules" ref="form" label-position="top">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Ảnh" prop="image">
+              <input @change="fileImage" type="file" id="file" class="inputfile" />
+              <label for="file">
+                <img class="imageHover" v-if="url" :src="url" alt="">
+                <img v-else src="../../assets/SD-default-image.png" alt="">
+              </label>
+              <i v-show="buttonCloseCheck" @click="buttonCloseImage" class="el-icon-close buttonClose"></i>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Tên" prop="name">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Miêu tả" prop="description">
+              <el-input
+                v-model="form.description"
+                autocomplete="off"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="Giá bán" prop="price">
+              <el-input
+                type="number"
+                v-model="form.price"
+                autocomplete="off"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormEdit = false">Thoát</el-button>
-        <el-button
-          type="primary"
-          :plain="true"
-          @click="editProduct(tempRow)"
+        <el-button type="primary" :plain="true" @click="editProduct(tempRow)"
           >Sửa</el-button
         >
       </span>
@@ -152,6 +165,8 @@ import moment from "moment";
 export default {
   data() {
     return {
+      buttonCloseCheck: false,
+      url: null,
       input: "",
       dataPage: 0,
       tableData: [],
@@ -195,8 +210,8 @@ export default {
         price: [
           {
             required: true,
-            message: "Mô tả không được để trống",
-            trigger: "change",
+            message: "Giá bán không được để trống",
+            trigger: "blur",
           },
         ],
         image: [
@@ -207,19 +222,28 @@ export default {
           },
         ],
       },
-      formLabelWidth: "120px",
     };
   },
   methods: {
     fileImage(e) {
       if (e.target.files.length) {
-        this.form.image = e.target.files[0];
+        let targetfile = e.target.files[0];
+        this.form.image = targetfile;
+        this.url = URL.createObjectURL(targetfile);
+        this.buttonCloseCheck = true
       }
+    },
+    buttonCloseImage() {
+      this.url = null;
+      this.form.image = '';
+      this.buttonCloseCheck = false;
     },
     addNewProduct() {
       this.form.name = "";
       this.form.description = "";
       this.form.price = "";
+      this.url = null;
+      this.buttonCloseCheck = false;
     },
     addProduct(formName) {
       this.$refs[formName].validate((valid) => {
@@ -245,6 +269,7 @@ export default {
               type: "success",
             });
             this.dialogFormVisible = false;
+            this.buttonCloseImage();
           });
         } else {
           this.$message({
@@ -260,6 +285,8 @@ export default {
       this.form.name = row.name;
       this.form.description = row.description;
       this.form.price = row.price;
+      this.url = null;
+      this.buttonCloseCheck = false;
     },
     searchTest() {
       axios({
@@ -300,6 +327,7 @@ export default {
           type: "success",
         });
         this.dialogFormEdit = false;
+        this.buttonCloseImage();
       });
     },
     DeleteProduct(row) {
@@ -384,5 +412,39 @@ export default {
 
 .page {
   margin: 10px;
+}
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputfile + label {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: contents;
+  cursor: pointer;
+  img {
+    width: 100%;
+    transition: .5s;
+  }
+  .imageHover:hover {
+    filter: grayscale(100%);
+  }
+}
+
+.buttonClose {
+  position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 30px;
+      cursor: pointer;
 }
 </style>
