@@ -35,6 +35,9 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
+        <el-form-item label="Ảnh" :label-width="formLabelWidth" prop="image">
+          <input @change="fileImage" type="file" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Thoát</el-button>
@@ -65,6 +68,9 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
+        <el-form-item label="Ảnh" :label-width="formLabelWidth" prop="image">
+          <input @change="fileImage" type="file" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormEdit = false">Thoát</el-button>
@@ -78,7 +84,18 @@
     </el-dialog>
 
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column label="Tên" prop="name"></el-table-column>
+      <el-table-column label="Tên">
+        <template slot-scope="scope">
+          <div class="center">
+            <el-avatar
+              v-if="scope.row.image"
+              :src="'http://vuecourse.zent.edu.vn/storage/' + scope.row.image"
+            ></el-avatar>
+            <el-avatar v-else icon="el-icon-user-solid"></el-avatar>
+            <span>{{ scope.row.name }}</span>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="Miêu tả" prop="description"> </el-table-column>
       <el-table-column label="Giá bán">
         <template slot-scope="scope">
@@ -146,6 +163,7 @@ export default {
         name: "",
         description: "",
         price: "",
+        image: "",
       },
       rules: {
         name: [
@@ -180,12 +198,24 @@ export default {
             message: "Mô tả không được để trống",
             trigger: "change",
           },
-        ]
+        ],
+        image: [
+          {
+            required: true,
+            message: "Ảnh không được để trống",
+            trigger: "change",
+          },
+        ],
       },
       formLabelWidth: "120px",
     };
   },
   methods: {
+    fileImage(e) {
+      if (e.target.files.length) {
+        this.form.image = e.target.files[0];
+      }
+    },
     addNewProduct() {
       this.form.name = "";
       this.form.description = "";
@@ -194,25 +224,28 @@ export default {
     addProduct(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          const formData = new FormData();
+          formData.append("name", this.form.name);
+          formData.append("description", this.form.description);
+          formData.append("price", this.form.price);
+          formData.append("image", this.form.image);
+
           axios({
-        method: 'post',
-        url: 'http://vuecourse.zent.edu.vn/api/products',
-        data: {
-          name: this.form.name,
-          description: this.form.description,
-          price: this.form.price
-        },
-      }).then(() => {
-        this.form.name = '';
-        this.form.description = '';
-        this.form.price = '';
-        this.getProducts();
-        this.$message({
+            method: "post",
+            url: "http://vuecourse.zent.edu.vn/api/products",
+            data: formData,
+          }).then(() => {
+            this.form.name = "";
+            this.form.description = "";
+            this.form.price = "";
+            this.form.image = "";
+            this.getProducts();
+            this.$message({
               message: "Thêm sản phẩm thành công",
               type: "success",
             });
             this.dialogFormVisible = false;
-      })
+          });
         } else {
           this.$message({
             type: "info",
@@ -244,25 +277,30 @@ export default {
       });
     },
     editProduct(row) {
+      const formData = new FormData();
+      formData.append("name", this.form.name);
+      formData.append("description", this.form.description);
+      formData.append("price", this.form.price);
+      if (this.form.image) {
+        formData.append("image", this.form.image);
+      }
+
       axios({
-        method: 'post',
-        url: 'http://vuecourse.zent.edu.vn/api/products/'+row,
-        data: {
-          name: this.form.name,
-          description: this.form.description,
-          price: this.form.price
-        },
+        method: "post",
+        url: "http://vuecourse.zent.edu.vn/api/products/" + row,
+        data: formData,
       }).then(() => {
-        this.form.name = '';
-        this.form.description = '';
-        this.form.price = '';
+        this.form.name = "";
+        this.form.description = "";
+        this.form.price = "";
+        this.form.image = "";
         this.getProducts();
         this.$message({
           message: "Sửa sản phẩm thành công",
           type: "success",
         });
         this.dialogFormEdit = false;
-      })
+      });
     },
     DeleteProduct(row) {
       this.$confirm("Bạn có muốn xóa không?", "Cảnh báo", {
@@ -334,6 +372,14 @@ export default {
   margin-right: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  span {
+    margin-left: 5px;
+  }
 }
 
 .page {

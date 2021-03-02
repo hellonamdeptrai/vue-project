@@ -11,6 +11,14 @@ const routes = [
     component: Home
   },
   {
+    path: '/bai10-1',
+    component: () => import('../views/Bai10/Bai1')
+  },
+  {
+    path: '/bai10-2',
+    component: () => import('../views/Bai10/Bai2')
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/Bai1/TongQuat')

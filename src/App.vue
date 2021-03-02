@@ -1,19 +1,23 @@
 <template>
-  <!-- <About/> -->
-  <router-view/>
+  <div>
+    <div class="menu">
+      <router-link to="/">Bai 9</router-link> | 
+      <router-link to="/bai10-1">Bài 10.1</router-link> | 
+      <router-link to="/bai10-2">Bài 10.2</router-link>
+    </div>
+    <router-view/>
+  </div>
 </template>
 
 <script>
-// import About from "./views/Ex01"
 
 export default {
   components: {
-    // About
+      //
   },
   data() {
     return {
-      // list: [1, 2, 3, 4, 5, 6],
-      // test: 'a'
+      //
     }
   },
   mounted() {
@@ -34,6 +38,11 @@ export default {
   font-family: Arial;
 }
 
+.menu {
+  text-align: center;
+  margin-bottom: 10px;
+}
+/* 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -53,5 +62,5 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
-}
+} */
 </style>
